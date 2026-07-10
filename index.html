@@ -16,6 +16,7 @@
                 --logo-max: 2560px;
                 --line-thickness: 8px;
                 --logo-gap: clamp(4px, 0.5vw, 10px);
+                --anim-speed: 1.5;
                 --logo-y: 52vh;
                 --s-width: clamp(32px, 3vw, 46px);
                 --forty-nine-width: clamp(60px, 5.8vw, 88px);
@@ -88,14 +89,16 @@
                 width: var(--s-width);
                 flex: 0 0 auto;
                 opacity: 0;
-                animation: fade-in 0.9s ease-out 0.2s forwards;
+                animation: fade-in calc(0.9s * var(--anim-speed)) ease-out
+                    calc(0.2s * var(--anim-speed)) forwards;
             }
 
             .brand-mark.forty-nine {
                 width: var(--forty-nine-width);
                 flex: 0 0 auto;
                 opacity: 0;
-                animation: fade-in 0.8s ease-out 2.4s forwards;
+                animation: fade-in calc(0.8s * var(--anim-speed)) ease-out
+                    calc(2.4s * var(--anim-speed)) forwards;
             }
 
             .brand-line {
@@ -111,8 +114,9 @@
                 background: var(--fg);
                 transform: scaleX(0);
                 transform-origin: left center;
-                animation: line-grow 1.7s cubic-bezier(0.22, 1, 0.36, 1) 0.9s
-                    forwards;
+                animation: line-grow calc(1.7s * var(--anim-speed))
+                    cubic-bezier(0.22, 1, 0.36, 1)
+                    calc(0.9s * var(--anim-speed)) forwards;
             }
 
             .copyright {
