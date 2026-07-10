@@ -1,35 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio49</title>
-  <style>
-    :root {
-      color-scheme: dark;
-    }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Studio49</title>
+        <style>
+            :root {
+                color-scheme: dark;
+                --bg: #0b0b0b;
+                --fg: #f5f5f5;
+                --page-pad: clamp(18px, 3vw, 40px);
+                --nav-size: clamp(12px, 1vw, 14px);
+                --logo-max: 1120px;
+                --line-thickness: 8px;
+                --logo-gap: clamp(4px, 0.5vw, 10px);
+                --logo-y: 52vh;
+                --s-width: clamp(32px, 3vw, 46px);
+                --forty-nine-width: clamp(60px, 5.8vw, 88px);
+                --copyright-width: clamp(40px, 3.8vw, 58px);
+            }
 
-    * {
-      box-sizing: border-box;
-    }
+            * {
+                box-sizing: border-box;
+            }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background: #000;
-    }
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background: var(--bg);
+                color: var(--fg);
+                font-family: Arial, Helvetica, sans-serif;
+            }
 
-    img {
-      display: block;
-      width: min(720px, 100%);
-      height: auto;
-    }
-  </style>
-</head>
-<body>
-  <img src="./Frame%202.svg" alt="Studio49">
-</body>
+            .page {
+                position: relative;
+                min-height: 100vh;
+                padding: var(--page-pad);
+                overflow: hidden;
+            }
+
+            .nav {
+                display: flex;
+                gap: clamp(14px, 1.6vw, 22px);
+                align-items: center;
+                font-size: var(--nav-size);
+                line-height: 1;
+            }
+
+            .nav a {
+                color: var(--fg);
+                text-decoration: none;
+            }
+
+            .nav a:hover {
+                opacity: 0.8;
+            }
+
+            .hero {
+                position: absolute;
+                left: var(--page-pad);
+                right: var(--page-pad);
+                top: var(--logo-y);
+                transform: translateY(-50%);
+                width: min(
+                    calc(100vw - (var(--page-pad) * 2)),
+                    var(--logo-max)
+                );
+                margin: 0 auto;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: var(--logo-gap);
+                width: 100%;
+            }
+
+            .brand-mark,
+            .brand-copy {
+                display: block;
+                height: auto;
+            }
+
+            .brand-mark.s {
+                width: var(--s-width);
+                flex: 0 0 auto;
+            }
+
+            .brand-mark.forty-nine {
+                width: var(--forty-nine-width);
+                flex: 0 0 auto;
+            }
+
+            .brand-line {
+                flex: 1 1 auto;
+                height: var(--line-thickness);
+                background: var(--fg);
+                min-width: 24px;
+            }
+
+            .copyright {
+                position: absolute;
+                right: var(--page-pad);
+                bottom: var(--page-pad);
+            }
+
+            .brand-copy {
+                width: var(--copyright-width);
+            }
+
+            @media (max-width: 640px) {
+                :root {
+                    --page-pad: 20px;
+                    --logo-y: 56vh;
+                    --line-thickness: 8px;
+                    --logo-gap: 6px;
+                    --s-width: 34px;
+                    --forty-nine-width: 67px;
+                    --copyright-width: 44px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main class="page">
+            <nav class="nav" aria-label="Контакты">
+                <a href="mailto:s49_design@mail.ru">написать</a>
+                <a
+                    href="https://t.me/s49_design"
+                    target="_blank"
+                    rel="noreferrer"
+                    >телеграм</a
+                >
+            </nav>
+
+            <section class="hero" aria-label="Studio49">
+                <div class="brand">
+                    <img class="brand-mark s" src="./s.svg" alt="S" />
+                    <div class="brand-line" aria-hidden="true"></div>
+                    <img
+                        class="brand-mark forty-nine"
+                        src="./49.svg"
+                        alt="49"
+                    />
+                </div>
+            </section>
+
+            <footer class="copyright">
+                <img
+                    class="brand-copy"
+                    src="./copyright%C2%A92026.svg"
+                    alt="Copyright 2026"
+                />
+            </footer>
+        </main>
+    </body>
 </html>
