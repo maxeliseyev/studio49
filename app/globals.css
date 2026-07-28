@@ -36,6 +36,7 @@ a { color: inherit; text-decoration: none; }
 a:hover { opacity: 0.8; }
 
 .social-links { display: flex; gap: clamp(14px, 1.6vw, 20px); align-items: center; font-size: 12px; line-height: 1; }
+.social-links a { white-space: nowrap; }
 .contact-link { position: absolute; top: var(--page-padding); right: calc(var(--page-padding) + 4.5vw); font-size: 12px; line-height: 1; }
 
 .intro-scroll { position: relative; height: 280svh; }
@@ -49,7 +50,7 @@ a:hover { opacity: 0.8; }
 
 @media (max-width: 640px) {
   :root { --page-padding: 20px; --logo-y: 56vh; --line-thickness: 8px; --logo-gap: 6px; --s-width: 34px; --forty-nine-width: 67px; }
-  .social-links { gap: 12px; flex-wrap: wrap; max-width: calc(100% - 100px); }
-  .contact-link { right: var(--page-padding); }
+  .social-links { gap: 10px; flex-wrap: nowrap; font-size: 11px; }
+  .contact-link { top: calc(var(--page-padding) + 28px); right: var(--page-padding); }
   .closing-footer { min-height: 30svh; align-items: start; flex-direction: column; justify-content: end; gap: 12px; line-height: 1.25; }
 }
