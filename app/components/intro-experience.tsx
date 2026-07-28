@@ -75,7 +75,7 @@ export function IntroExperience() {
         const pixelProgress = clamp((progress - 0.45) / 0.42);
         const disappearProgress = clamp((progress - 0.78) / 0.18);
         const lineLength = Math.max(lineWidth * 0.02 * introLineProgress, lineWidth * scrollLineProgress);
-        const fortyNineOpacity = clamp((scrollLineProgress - 0.38) / 0.2);
+        const fortyNineOpacity = clamp((scrollLineProgress - 0.9) / 0.1);
         const scale = Math.max(0.045, 1 - pixelProgress * 0.955);
         const alpha = 1 - disappearProgress;
 
