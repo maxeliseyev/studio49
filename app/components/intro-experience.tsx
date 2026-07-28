@@ -65,11 +65,14 @@ export function IntroExperience() {
       const context = canvas.getContext("2d");
       if (!context) return;
       const introStart = window.performance.now();
+      let furthestScrollProgress = 0;
 
       const drawBrand = () => {
         const bounds = section.getBoundingClientRect();
         const scrollableDistance = Math.max(section.offsetHeight - height, 1);
-        const progress = clamp(-bounds.top / scrollableDistance);
+        const scrollProgress = clamp(-bounds.top / scrollableDistance);
+        furthestScrollProgress = Math.max(furthestScrollProgress, scrollProgress);
+        const progress = furthestScrollProgress;
         const scrollLineProgress = clamp((progress - 0.02) / 0.35);
         const introLineProgress = clamp((window.performance.now() - introStart - 1000) / 550);
         const pixelProgress = clamp((progress - 0.45) / 0.42);
