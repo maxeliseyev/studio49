@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 
 const socialLinks = [
   { label: "телеграм", href: "https://t.me/s49design" },
+  { label: "behance", href: "https://www.behance.net/s49design" },
   { label: "инстаграм*", href: "https://www.instagram.com/s49design/" },
-  { label: "дизайнерс", href: "https://designers.ru/s49design/" },
   { label: "линкедин", href: "https://www.linkedin.com/company/s49design/" },
+  { label: "написать", href: "mailto:s49design@yandex.ru" },
 ];
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);
@@ -31,7 +32,6 @@ export function IntroExperience() {
 
     let frameId = 0;
     let disposed = false;
-    const buffer = document.createElement("canvas");
     const images = Promise.all([loadImage("/s.svg"), loadImage("/49.svg")]);
 
     const render = async () => {
@@ -73,33 +73,20 @@ export function IntroExperience() {
         const scrollProgress = clamp(-bounds.top / scrollableDistance);
         furthestScrollProgress = Math.max(furthestScrollProgress, scrollProgress);
         const progress = furthestScrollProgress;
-        const scrollLineProgress = clamp((progress - 0.02) / 0.35);
+        const scrollLineProgress = clamp(progress / 0.82);
         const introLineProgress = clamp((window.performance.now() - introStart - 1000) / 550);
-        const pixelProgress = clamp((progress - 0.45) / 0.42);
-        const disappearProgress = clamp((progress - 0.78) / 0.18);
         const lineLength = Math.max(lineWidth * 0.02 * introLineProgress, lineWidth * scrollLineProgress);
         const fortyNineOpacity = clamp((scrollLineProgress - 0.9) / 0.1);
-        const scale = Math.max(0.045, 1 - pixelProgress * 0.955);
-        const alpha = 1 - disappearProgress;
-
-        buffer.width = Math.max(1, Math.round(width * scale * dpr));
-        buffer.height = Math.max(1, Math.round(height * scale * dpr));
-        const bufferContext = buffer.getContext("2d");
-        if (!bufferContext) return;
-
-        bufferContext.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
-        bufferContext.clearRect(0, 0, width, height);
-        bufferContext.globalAlpha = alpha;
-        bufferContext.drawImage(sMark, sX, sY, sWidth, sHeight);
-        bufferContext.fillStyle = "#fff";
-        bufferContext.fillRect(lineStart, logoY - lineThickness / 2, lineLength, lineThickness);
-        bufferContext.globalAlpha = alpha * fortyNineOpacity;
-        bufferContext.drawImage(fortyNineMark, fortyNineX, fortyNineY, fortyNineWidth, fortyNineHeight);
 
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.clearRect(0, 0, width, height);
-        context.imageSmoothingEnabled = false;
-        context.drawImage(buffer, 0, 0, buffer.width, buffer.height, 0, 0, width, height);
+        context.globalAlpha = 1;
+        context.drawImage(sMark, sX, sY, sWidth, sHeight);
+        context.fillStyle = "#fff";
+        context.fillRect(lineStart, logoY - lineThickness / 2, lineLength, lineThickness);
+        context.globalAlpha = fortyNineOpacity;
+        context.drawImage(fortyNineMark, fortyNineX, fortyNineY, fortyNineWidth, fortyNineHeight);
+        context.globalAlpha = 1;
       };
 
       const update = () => {
@@ -135,18 +122,18 @@ export function IntroExperience() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="intro-scroll" aria-labelledby="studio-title">
+    <section ref={sectionRef} className="intro-scroll" id="top" aria-labelledby="studio-title">
       <div className="intro-stage">
-        <nav className="social-links" aria-label="Социальные сети">
-          {socialLinks.map(({ label, href }) => (
-            <a key={label} href={href} target="_blank" rel="noreferrer">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <a className="contact-link" href="mailto:s49design@yandex.ru">
-          написать
-        </a>
+        <header className="site-header">
+          <a className="site-mark" href="#top" aria-label="S—49, в начало страницы">S—49</a>
+          <nav className="social-links" aria-label="Контакты">
+            {socialLinks.map(({ label, href }) => (
+              <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>
+                {label}
+              </a>
+            ))}
+          </nav>
+        </header>
         <h1 id="studio-title" className="sr-only">Studio49</h1>
         <canvas ref={canvasRef} className="brand-canvas" aria-hidden="true" />
       </div>
