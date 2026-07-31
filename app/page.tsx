@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { IntroExperience } from "./components/intro-experience";
 
 const projects = [
@@ -21,21 +24,40 @@ const projects = [
   ["Logos&Marks", "логотип", "кейс", "", "2022", ""],
 ] as const;
 
+const filters = [
+  ["all", "все проекты"],
+  ["логотип", "логотип"],
+  ["брендинг", "брендинг"],
+  ["веб-дизайн", "веб-дизайн"],
+  ["разработка", "разработка"],
+] as const;
+
 export default function Home() {
+  const [activeFilter, setActiveFilter] = useState<(typeof filters)[number][0]>("all");
+  const visibleProjects = activeFilter === "all"
+    ? projects
+    : projects.filter(([, services]) => services.includes(activeFilter));
+
   return (
     <main>
       <IntroExperience />
       <section className="projects" aria-labelledby="projects-title">
         <h2 id="projects-title">Проекты</h2>
         <div className="project-filters" aria-label="Тип проекта">
-          <button className="is-active" type="button">все проекты</button>
-          <button type="button">логотип</button>
-          <button type="button">брендинг</button>
-          <button type="button">веб-дизайн</button>
-          <button type="button">разработка</button>
+          {filters.map(([filter, label]) => (
+            <button
+              className={activeFilter === filter ? "is-active" : undefined}
+              type="button"
+              key={filter}
+              aria-pressed={activeFilter === filter}
+              onClick={() => setActiveFilter(filter)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
         <div className="project-list">
-          {projects.map(([name, services, caseLink, siteLink, year, siteUrl], index) => (
+          {visibleProjects.map(([name, services, caseLink, siteLink, year, siteUrl], index) => (
             <article className="project-row" key={`${name}-${year}-${index}`}>
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
