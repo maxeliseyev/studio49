@@ -3,6 +3,7 @@
 :root {
   --background: #E1E1E1;
   --foreground: #111;
+  --menu-bg: #1C1C1C;
   --page-padding: clamp(20px, 2vw, 24px);
   --line-thickness: clamp(6px, 0.667vw, 8px);
   --logo-gap: clamp(4px, 0.5vw, 10px);
@@ -45,12 +46,16 @@ a:hover { opacity: 0.8; }
 .social-links a { white-space: nowrap; }
 
 /* Плюс виден только на мобиле; 44px — тач-таргет, отрицательные поля не дают
-   ему раздуть строку хедера. Раскрытое меню превращает плюс в крестик. */
+   ему раздуть строку хедера. Три полосы: средняя — сам span, крайние — его
+   псевдоэлементы. Закрыто — плюс (верхняя полоса стоит вертикально, нижняя
+   спрятана), открыто — бургер: вертикаль ложится плашмя и полосы расходятся. */
 .nav-toggle { display: none; position: relative; width: 44px; height: 44px; margin: -14px -13px -14px 0; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
-.nav-toggle::before, .nav-toggle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 17px; height: 2.5px; margin: -1.25px 0 0 -8.5px; background: currentColor; transition: transform .3s ease; }
-.nav-toggle::after { transform: rotate(90deg); }
-.site-header.is-open .nav-toggle::before { transform: rotate(45deg); }
-.site-header.is-open .nav-toggle::after { transform: rotate(135deg); }
+.nav-toggle span { position: absolute; top: 50%; left: 50%; width: 17px; height: 2.5px; margin: -1.25px 0 0 -8.5px; background: currentColor; }
+.nav-toggle span::before, .nav-toggle span::after { content: ""; position: absolute; inset: 0; background: currentColor; transition: transform .3s ease, opacity .2s ease; }
+.nav-toggle span::before { transform: rotate(90deg); }
+.nav-toggle span::after { opacity: 0; }
+.site-header.is-open .nav-toggle span::before { transform: translateY(-6px); }
+.site-header.is-open .nav-toggle span::after { opacity: 1; transform: translateY(6px); }
 
 .intro-scroll { position: relative; height: 100svh; }
 .intro-stage { position: relative; height: 100svh; overflow: hidden; padding: var(--page-padding); }
@@ -78,18 +83,27 @@ a:hover { opacity: 0.8; }
 
 @media (max-width: 640px) {
   :root { --page-padding: 20px; --logo-y: 56vh; --line-thickness: 8px; --logo-gap: 6px; --s-width: 34px; --forty-nine-width: 67px; }
-  .site-header { grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; align-items: center; }
+  /* Хедер растянут на весь экран, чтобы ссылки могли прижаться к низу. Закрытый
+     прозрачен и не ловит клики — их пропускаем только логотипу и кнопке. */
+  .site-header { inset: 0; height: 100dvh; padding: var(--page-padding); padding-bottom: max(var(--page-padding), env(safe-area-inset-bottom)); grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); gap: 0 12px; align-items: center; pointer-events: none; transition: opacity .35s ease-out, transform .35s ease-out, background-color .3s ease, color .3s ease; }
+  .site-header.is-ready { pointer-events: none; }
+  .site-header::before { top: 0; right: 0; left: 0; }
+  .site-mark, .nav-toggle { pointer-events: auto; }
   .site-mark { width: 82px; }
   .nav-toggle { display: block; }
-  /* 0fr -> 1fr раскрывает список без магической max-height. */
-  .social-links { grid-column: 1 / -1; display: grid; grid-template-rows: 0fr; overflow: hidden; opacity: 0; visibility: hidden; transition: grid-template-rows .32s ease, opacity .2s ease, visibility 0s linear .32s; }
-  .site-header.is-open .social-links { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition: grid-template-rows .32s ease, opacity .2s ease, visibility 0s; }
-  /* padding анимируется вместе с треком: в 0fr он не схлопывается сам и оставил
-     бы 20px пустоты под логотипом в закрытом состоянии. */
-  .social-links-inner { min-height: 0; flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 0; transition: padding-top .32s ease; }
-  .site-header.is-open .social-links-inner { padding-top: 20px; }
-  /* Под раскрытым меню нужна плашка — иначе ссылки лягут на строки знака. */
-  .site-header.is-open::before { height: calc(100% + var(--page-padding)); background: var(--background); -webkit-mask-image: none; mask-image: none; }
+
+  /* Открытое меню — тёмная панель на весь экран. Логотип монохромный (#111),
+     поэтому на тёмном его достаточно инвертировать, отдельный ассет не нужен. */
+  .site-header.is-open { background: var(--menu-bg); color: var(--background); pointer-events: auto; }
+  .site-header.is-open::before { opacity: 0; }
+  .site-header.is-open .site-mark img { filter: invert(1); }
+
+  .social-links { grid-column: 1 / -1; align-self: end; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .25s ease, transform .3s ease, visibility 0s linear .3s; }
+  .site-header.is-open .social-links { opacity: 1; visibility: visible; transform: none; transition: opacity .25s ease .06s, transform .3s ease .06s, visibility 0s; }
+  /* Четыре ссылки столбиком слева, «написать» — в правом углу последней строки. */
+  .social-links-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; row-gap: 11px; }
+  .social-links-inner > a { grid-column: 1; }
+  .social-links-inner > a:last-child { grid-column: 2; grid-row: 4; justify-self: end; font-weight: 500; }
   /* Интро занимает ровно первый экран: svh — высота при развёрнутом UI браузера. */
   .intro-scroll, .intro-stage { height: 100svh; min-height: 620px; }
   .intro-meta { position: absolute; z-index: 1; right: var(--page-padding); bottom: max(var(--page-padding), env(safe-area-inset-bottom)); left: var(--page-padding); display: flex; justify-content: space-between; color: #9f9f9f; font-size: 14px; line-height: 1; }

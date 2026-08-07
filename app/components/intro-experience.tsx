@@ -60,8 +60,13 @@ export function IntroExperience() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setIsNavOpen(false);
     };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [isNavOpen]);
 
   useEffect(() => {
@@ -272,7 +277,9 @@ export function IntroExperience() {
             aria-expanded={isNavOpen}
             aria-label={isNavOpen ? "Закрыть меню" : "Открыть меню"}
             onClick={() => setIsNavOpen((open) => !open)}
-          />
+          >
+            <span aria-hidden="true" />
+          </button>
           <nav id="site-nav" className="social-links" aria-label="Контакты">
             <div className="social-links-inner">
               {socialLinks.map(({ label, href }) => (
