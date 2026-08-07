@@ -41,8 +41,15 @@ export default function Home() {
   return (
     <main>
       <IntroExperience />
+      <section className="about" aria-labelledby="about-title">
+        <p className="section-label">О команде</p>
+        <h2 id="about-title">Нам важно, чтобы проект приносил результат, а не просто пополнял портфолио. Работая в формате распределённой команды в течении 5 лет, мы сформировали системный подход к выполнению задач. И готовы к новым вызовам.</h2>
+      </section>
       <section className="projects" aria-labelledby="projects-title">
-        <h2 id="projects-title">Проекты</h2>
+        <div className="section-heading">
+          <p className="section-label">Проекты</p>
+          <h2 id="projects-title">Здесь — то, что мы уже построили. От лендингов до сложных айдентик. Каждый проект — не просто картинка, а работающая система.</h2>
+        </div>
         <div className="project-filters" aria-label="Тип проекта">
           {filters.map(([filter, label]) => (
             <button
