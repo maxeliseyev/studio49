@@ -11,15 +11,33 @@ const socialLinks = [
 ];
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+
 const easeInOutCubic = (value: number) => (
   value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
 );
+
+// Переводит момент времени внутри отрезка [from, to] в прогресс 0..1.
+const track = (value: number, from: number, to: number) => clamp((value - from) / (to - from));
 
 const HERO = {
   s: { x: 0, y: 0, width: 50.286, height: 64 },
   line: { x: 59, y: 29, width: 1702, height: 11 },
   fortyNine: { x: 1783, y: 0, width: 97, height: 64 },
 } as const;
+
+// Макет S—49_Main_375: знак сложен в 9 строк с шагом 64. Первая строка начинается
+// после «S», семь средних идут от края до края, последняя обрывается перед «49».
+// bottomReserve — полоса под Version/Loading плюс воздух над ней.
+const FOLD = { rows: 9, step: 64, top: 129, gap: 8, refWidth: 375, refHeight: 705, bottomReserve: 76 } as const;
+
+const INK = "#111111";
+const FINAL = 100000;
+
+const timeline = (isMobile: boolean) => {
+  const lineStart = 750;
+  const lineEnd = lineStart + (isMobile ? 2600 : 1750);
+  return { lineStart, lineEnd, total: lineEnd + 400 };
+};
 
 function loadImage(source: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -32,39 +50,50 @@ function loadImage(source: string) {
 
 export function IntroExperience() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Счётчик пишется напрямую в DOM, чтобы не перерисовывать дерево каждый кадр.
+  const loadingRef = useRef<HTMLSpanElement>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    let frameId = 0;
     let disposed = false;
-    const images = loadImage("/studio49-hero.svg");
+    let frameId = 0;
+    let startTime = 0;
+    let finished = false;
+    let detach: (() => void) | undefined;
 
-    const render = async () => {
-      const brandMark = await images;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    loadImage("/studio49-hero.svg").then((brandMark) => {
       if (disposed) return;
-
-      const isMobile = window.innerWidth <= 640;
-      const bounds = canvas.getBoundingClientRect();
-      // Desktop keeps the original viewport-based canvas. The mobile canvas uses
-      // its own stage so the folded mark can reserve its vertical space.
-      const width = Math.round(isMobile ? bounds.width : window.innerWidth);
-      const height = Math.round(isMobile ? bounds.height : window.innerHeight);
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const pagePadding = isMobile ? 20 : clamp(width * 0.02, 20, 24);
-
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
       const context = canvas.getContext("2d");
       if (!context) return;
-      const introStart = window.performance.now();
+
+      const measureStage = () => {
+        const isMobile = window.innerWidth <= 640;
+        // Замеряем сцену, а не канвас: канвасу ниже проставляются инлайновые
+        // размеры, и на ресайзе он вернул бы их же вместо размера контейнера.
+        const bounds = (canvas.parentElement ?? canvas).getBoundingClientRect();
+        // Desktop keeps the original viewport-based canvas. The mobile canvas uses
+        // its own stage so the folded mark can reserve its vertical space.
+        const width = Math.round(isMobile ? bounds.width : window.innerWidth);
+        const height = Math.round(isMobile ? bounds.height : window.innerHeight);
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        return { isMobile, width, height, dpr, pagePadding: isMobile ? 20 : clamp(width * 0.02, 20, 24) };
+      };
+
+      let stage = measureStage();
 
       const drawDesktopBrand = (lineProgress: number, sOpacity: number, fortyNineOpacity: number) => {
+        const { width, height, pagePadding } = stage;
         const logoY = height * 0.52;
         const brandWidth = Math.min(width - pagePadding * 2, brandMark.naturalWidth);
         const brandScale = brandWidth / brandMark.naturalWidth;
@@ -94,37 +123,46 @@ export function IntroExperience() {
       };
 
       const drawMobileBrand = (lineProgress: number, sOpacity: number, fortyNineOpacity: number) => {
-        const brandScale = clamp((width - 40) / 350, 0.75, 1);
-        const brandTop = clamp(height * 0.15, 104, 118);
-        const lineY = brandTop + HERO.line.y * brandScale;
-        const rowStep = HERO.s.height * brandScale;
-        const lineHeight = HERO.line.height * brandScale;
-        const outerLeft = -lineHeight / 2;
-        const outerRight = width + lineHeight / 2;
+        const { width, height, pagePadding } = stage;
+        // Макет нарисован на артборде 375px, поэтому знак тянется вместе с шириной
+        // экрана — но не настолько, чтобы девять строк перестали влезать по высоте.
+        const brandScale = clamp(
+          Math.min(width / FOLD.refWidth, (height - FOLD.bottomReserve) / FOLD.refHeight),
+          0.7,
+          1.25,
+        );
+        const brandTop = FOLD.top * brandScale;
+        const rowStep = FOLD.step * brandScale;
+        const thickness = HERO.line.height * brandScale;
+        // Строки выходят на пиксель за края, чтобы на дробном dpr не было щели.
+        const outerLeft = -1;
+        const outerRight = width + 1;
         const fortyNineX = width - pagePadding - HERO.fortyNine.width * brandScale;
-        const finalLineEnd = fortyNineX - 6 * brandScale;
-        const rows = Array.from({ length: 9 }, (_, index) => {
-          const y = lineY + rowStep * index;
-          if (index === 0) return { from: pagePadding + HERO.line.x * brandScale, to: outerRight, y };
-          if (index === 8) return { from: outerLeft, to: finalLineEnd, y };
-          return index % 2 === 0
-            ? { from: outerLeft, to: outerRight, y }
-            : { from: outerRight, to: outerLeft, y };
+        const lastRow = FOLD.rows - 1;
+
+        // Линия переносится как текст: каждая строка идёт слева направо, дойдя до
+        // правого края — обрыв и продолжение с левого края следующей строки.
+        const rows = Array.from({ length: FOLD.rows }, (_, index) => {
+          const y = brandTop + rowStep * index + HERO.line.y * brandScale;
+          const start = index === 0 ? pagePadding + HERO.line.x * brandScale : outerLeft;
+          const end = index === lastRow ? fortyNineX - FOLD.gap * brandScale : outerRight;
+          return { start, end, y };
         });
-        const pathLength = rows.reduce((total, row) => total + Math.abs(row.to - row.from), 0);
+
+        // Штрих движется с постоянной скоростью вдоль суммы всех строк, поэтому
+        // перенос читается как продолжение одной линии, а не как девять ревилов.
+        const pathLength = rows.reduce((total, row) => total + (row.end - row.start), 0);
         let remaining = pathLength * lineProgress;
 
         context.globalAlpha = sOpacity;
         context.drawImage(brandMark, HERO.s.x, HERO.s.y, HERO.s.width, HERO.s.height, pagePadding, brandTop, HERO.s.width * brandScale, HERO.s.height * brandScale);
         context.globalAlpha = 1;
 
+        context.fillStyle = INK;
         rows.forEach((row) => {
-          const rowLength = Math.abs(row.to - row.from);
+          const rowLength = row.end - row.start;
           const drawnLength = clamp(remaining, 0, rowLength);
-          if (drawnLength > 0) {
-            const direction = Math.sign(row.to - row.from);
-            context.fillRect(row.from, row.y - lineHeight / 2, drawnLength * direction, lineHeight);
-          }
+          if (drawnLength > 0) context.fillRect(row.start, row.y, drawnLength, thickness);
           remaining -= rowLength;
         });
 
@@ -136,59 +174,79 @@ export function IntroExperience() {
           HERO.fortyNine.width,
           HERO.fortyNine.height,
           fortyNineX,
-          lineY + rowStep * 8 - HERO.line.y * brandScale,
+          brandTop + rowStep * lastRow,
           HERO.fortyNine.width * brandScale,
           HERO.fortyNine.height * brandScale,
         );
         context.globalAlpha = 1;
       };
 
-      const drawBrand = () => {
-        const elapsed = isReady
-          ? (isMobile ? 3800 : 3400)
-          : window.performance.now() - introStart;
-        const sOpacity = clamp((elapsed - 200) / 350);
-        const lineProgress = easeInOutCubic(clamp((elapsed - 750) / (isMobile ? 2500 : 1750)));
-        const fortyNineOpacity = clamp((elapsed - (isMobile ? 3300 : 2800)) / 400);
+      const paint = (elapsed: number) => {
+        const { lineStart, lineEnd, total } = timeline(stage.isMobile);
+        const sOpacity = track(elapsed, 200, 550);
+        const lineProgress = easeInOutCubic(track(elapsed, lineStart, lineEnd));
+        const fortyNineOpacity = track(elapsed, lineEnd, lineEnd + 400);
 
-        context.setTransform(dpr, 0, 0, dpr, 0, 0);
-        context.clearRect(0, 0, width, height);
-        if (isMobile) drawMobileBrand(lineProgress, sOpacity, fortyNineOpacity);
+        context.setTransform(stage.dpr, 0, 0, stage.dpr, 0, 0);
+        context.clearRect(0, 0, stage.width, stage.height);
+        if (stage.isMobile) drawMobileBrand(lineProgress, sOpacity, fortyNineOpacity);
         else drawDesktopBrand(lineProgress, sOpacity, fortyNineOpacity);
+
+        if (loadingRef.current) {
+          loadingRef.current.textContent = `Loading: ${Math.round(track(elapsed, 0, total) * 100)}%`;
+        }
       };
 
-      const update = () => {
-        drawBrand();
+      const tick = (now: number) => {
         frameId = 0;
-        if (window.performance.now() - introStart < (isMobile ? 3800 : 3400)) {
-          requestUpdate();
-        } else {
+        if (!startTime) startTime = now;
+        const elapsed = now - startTime;
+        const done = elapsed >= timeline(stage.isMobile).total;
+        // Следующий кадр запрашивается до отрисовки: если paint бросит исключение,
+        // анимация не замрёт молча на полпути.
+        if (!done) frameId = window.requestAnimationFrame(tick);
+        paint(done ? FINAL : elapsed);
+        if (done && !finished) {
+          finished = true;
           setIsReady(true);
         }
       };
 
-      const requestUpdate = () => {
-        if (!frameId) frameId = window.requestAnimationFrame(update);
+      // rAF не тикает в скрытой вкладке — если кадр потерялся, подхватываем цикл.
+      const resume = () => {
+        if (disposed || finished || frameId || document.hidden) return;
+        frameId = window.requestAnimationFrame(tick);
       };
 
-      if (isReady) drawBrand();
-      else requestUpdate();
-
-      return () => {
+      const handleResize = () => {
+        stage = measureStage();
+        // Пока идёт анимация, перерисовкой займётся следующий кадр rAF.
+        if (finished) paint(FINAL);
+        else resume();
       };
-    };
 
-    let cleanup: (() => void) | undefined;
-    render().then((result) => {
-      cleanup = result;
+      if (reduceMotion) {
+        paint(FINAL);
+        finished = true;
+        setIsReady(true);
+      } else {
+        frameId = window.requestAnimationFrame(tick);
+      }
+
+      window.addEventListener("resize", handleResize);
+      document.addEventListener("visibilitychange", resume);
+      detach = () => {
+        window.removeEventListener("resize", handleResize);
+        document.removeEventListener("visibilitychange", resume);
+      };
     });
 
     return () => {
       disposed = true;
       if (frameId) window.cancelAnimationFrame(frameId);
-      cleanup?.();
+      detach?.();
     };
-  }, [isReady]);
+  }, []);
 
   return (
     <section className="intro-scroll" id="top" aria-labelledby="studio-title">
@@ -209,7 +267,7 @@ export function IntroExperience() {
         <canvas ref={canvasRef} className="brand-canvas" aria-hidden="true" />
         <div className="intro-meta" aria-hidden="true">
           <span>Version: 001</span>
-          <span>Loading: 78%</span>
+          <span ref={loadingRef}>Loading: 0%</span>
         </div>
       </div>
     </section>

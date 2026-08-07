@@ -45,7 +45,8 @@ a:hover { opacity: 0.8; }
 
 .intro-scroll { position: relative; height: 100svh; }
 .intro-stage { position: relative; height: 100svh; overflow: hidden; padding: var(--page-padding); }
-.brand-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+/* width/height обязательны: canvas — replaced element, inset: 0 его не растягивает. */
+.brand-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 .social-links, .site-mark { position: relative; z-index: 1; }
 .intro-meta { display: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
@@ -71,8 +72,9 @@ a:hover { opacity: 0.8; }
   .site-header { grid-template-columns: 1fr; gap: 18px; }
   .site-mark { width: 82px; }
   .social-links { gap: 10px; flex-wrap: nowrap; font-size: 11px; }
-  .intro-scroll, .intro-stage { height: 720px; min-height: 720px; }
-  .intro-meta { position: absolute; z-index: 1; top: 670px; right: var(--page-padding); left: var(--page-padding); display: flex; justify-content: space-between; color: #9f9f9f; font-size: 14px; line-height: 1; }
+  /* Интро занимает ровно первый экран: svh — высота при развёрнутом UI браузера. */
+  .intro-scroll, .intro-stage { height: 100svh; min-height: 620px; }
+  .intro-meta { position: absolute; z-index: 1; right: var(--page-padding); bottom: max(var(--page-padding), env(safe-area-inset-bottom)); left: var(--page-padding); display: flex; justify-content: space-between; color: #9f9f9f; font-size: 14px; line-height: 1; }
   .about { margin-top: 38px; }
   .about h2, .section-heading h2 { margin-top: 8px; font-size: 16px; line-height: 1.13; }
   .section-label { font-size: 12px; }
