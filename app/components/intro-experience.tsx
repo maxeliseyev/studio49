@@ -46,11 +46,13 @@ export function IntroExperience() {
       const brandMark = await images;
       if (disposed) return;
 
+      const isMobile = window.innerWidth <= 640;
       const bounds = canvas.getBoundingClientRect();
-      const width = Math.round(bounds.width);
-      const height = Math.round(bounds.height);
+      // Desktop keeps the original viewport-based canvas. The mobile canvas uses
+      // its own stage so the folded mark can reserve its vertical space.
+      const width = Math.round(isMobile ? bounds.width : window.innerWidth);
+      const height = Math.round(isMobile ? bounds.height : window.innerHeight);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const isMobile = width <= 640;
       const pagePadding = isMobile ? 20 : clamp(width * 0.02, 20, 24);
 
       canvas.width = Math.round(width * dpr);
@@ -142,7 +144,9 @@ export function IntroExperience() {
       };
 
       const drawBrand = () => {
-        const elapsed = window.performance.now() - introStart;
+        const elapsed = isReady
+          ? (isMobile ? 3800 : 3400)
+          : window.performance.now() - introStart;
         const sOpacity = clamp((elapsed - 200) / 350);
         const lineProgress = easeInOutCubic(clamp((elapsed - 750) / (isMobile ? 2500 : 1750)));
         const fortyNineOpacity = clamp((elapsed - (isMobile ? 3300 : 2800)) / 400);
@@ -167,7 +171,8 @@ export function IntroExperience() {
         if (!frameId) frameId = window.requestAnimationFrame(update);
       };
 
-      requestUpdate();
+      if (isReady) drawBrand();
+      else requestUpdate();
 
       return () => {
       };
@@ -183,7 +188,7 @@ export function IntroExperience() {
       if (frameId) window.cancelAnimationFrame(frameId);
       cleanup?.();
     };
-  }, []);
+  }, [isReady]);
 
   return (
     <section className="intro-scroll" id="top" aria-labelledby="studio-title">
