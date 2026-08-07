@@ -53,6 +53,16 @@ export function IntroExperience() {
   // Счётчик пишется напрямую в DOM, чтобы не перерисовывать дерево каждый кадр.
   const loadingRef = useRef<HTMLSpanElement>(null);
   const [isReady, setIsReady] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isNavOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsNavOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isNavOpen]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -251,16 +261,32 @@ export function IntroExperience() {
   return (
     <section className="intro-scroll" id="top" aria-labelledby="studio-title">
       <div className="intro-stage">
-        <header className={`site-header${isReady ? " is-ready" : ""}`}>
+        <header className={`site-header${isReady ? " is-ready" : ""}${isNavOpen ? " is-open" : ""}`}>
           <a className="site-mark" href="#top" aria-label="S—49, в начало страницы">
             <img src="/studio49-header.svg" alt="S—49" />
           </a>
-          <nav className="social-links" aria-label="Контакты">
-            {socialLinks.map(({ label, href }) => (
-              <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>
-                {label}
-              </a>
-            ))}
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-controls="site-nav"
+            aria-expanded={isNavOpen}
+            aria-label={isNavOpen ? "Закрыть меню" : "Открыть меню"}
+            onClick={() => setIsNavOpen((open) => !open)}
+          />
+          <nav id="site-nav" className="social-links" aria-label="Контакты">
+            <div className="social-links-inner">
+              {socialLinks.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noreferrer" : undefined}
+                  onClick={() => setIsNavOpen(false)}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
           </nav>
         </header>
         <h1 id="studio-title" className="sr-only">Studio49</h1>
