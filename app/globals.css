@@ -46,16 +46,13 @@ a:hover { opacity: 0.8; }
 .social-links a { white-space: nowrap; }
 
 /* Плюс виден только на мобиле; 44px — тач-таргет, отрицательные поля не дают
-   ему раздуть строку хедера. Три полосы: средняя — сам span, крайние — его
-   псевдоэлементы. Закрыто — плюс (верхняя полоса стоит вертикально, нижняя
-   спрятана), открыто — бургер: вертикаль ложится плашмя и полосы расходятся. */
+   ему раздуть строку хедера. Сам span — горизонтальная палочка, псевдоэлемент —
+   вертикальная; открытое меню поворачивает span целиком, и плюс становится
+   крестиком. Поля центрируют span, поэтому поворот идёт вокруг центра кнопки. */
 .nav-toggle { display: none; position: relative; width: 44px; height: 44px; margin: -14px -13px -14px 0; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
-.nav-toggle span { position: absolute; top: 50%; left: 50%; width: 17px; height: 2.5px; margin: -1.25px 0 0 -8.5px; background: currentColor; }
-.nav-toggle span::before, .nav-toggle span::after { content: ""; position: absolute; inset: 0; background: currentColor; transition: transform .3s ease, opacity .2s ease; }
-.nav-toggle span::before { transform: rotate(90deg); }
-.nav-toggle span::after { opacity: 0; }
-.site-header.is-open .nav-toggle span::before { transform: translateY(-6px); }
-.site-header.is-open .nav-toggle span::after { opacity: 1; transform: translateY(6px); }
+.nav-toggle span { position: absolute; top: 50%; left: 50%; width: 17px; height: 2.5px; margin: -1.25px 0 0 -8.5px; background: currentColor; transition: transform .3s ease; }
+.nav-toggle span::before { content: ""; position: absolute; inset: 0; background: currentColor; transform: rotate(90deg); }
+.site-header.is-open .nav-toggle span { transform: rotate(45deg); }
 
 .intro-scroll { position: relative; height: 100svh; }
 .intro-stage { position: relative; height: 100svh; overflow: hidden; padding: var(--page-padding); }
