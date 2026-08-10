@@ -9,17 +9,17 @@ const projects = [
   ["Brier", "веб-дизайн / разработка", "", "сайт", "2026", "https://brier-wear.com/"],
   ["Technometall", "логотип / веб-дизайн / разработка", "", "сайт", "2026", "https://technometall.ru/"],
   ["Logos&Marks", "логотип", "кейс", "", "2025", ""],
-  ["ORWO", "брендинг / веб-дизайн", "кейс", "", "2025", ""],
+  ["ORWO", "брендинг / веб-дизайн", "", "", "2025", ""],
   ["Forge", "логотип / брендинг / веб-дизайн / разработка", "кейс", "сайт", "2025", "https://forgemoscow.ru/"],
   ["КДК", "веб-дизайн / разработка", "", "сайт", "2025", "https://kdkstanki.ru/"],
-  ["РАХ", "веб-дизайн / разработка", "", "сайт", "2025", "https://paxfactory.com/"],
+  ["PAX", "веб-дизайн / разработка", "", "сайт", "2025", "https://paxfactory.com/"],
   ["Apparat software", "веб-дизайн / разработка", "", "сайт", "2025", "https://teams.apparat.software/"],
   ["Logos&Marks", "логотип", "кейс", "", "2024", ""],
-  ["SMT FLEX", "логотип / брендинг / веб-дизайн", "кейс", "сайт", "2024", "https://smtflex.ru/"],
+  ["SMT FLEX", "логотип / брендинг / веб-дизайн", "", "сайт", "2024", "https://smtflex.ru/"],
   ["WhatMattersAgency", "логотип / брендинг / веб-дизайн", "кейс", "", "2024", ""],
   ["Logos&Marks", "логотип", "кейс", "", "2023", ""],
   ["РациON", "логотип / брендинг", "кейс", "", "2023", ""],
-  ["CROOG", "логотип / веб-дизайн", "кейс", "", "2022", ""],
+  ["CROOG", "логотип / брендинг", "кейс", "", "2022", ""],
   ["Logos&Marks", "логотип", "кейс", "", "2022", ""],
 ] as const;
 
@@ -67,14 +67,14 @@ export default function Home() {
             <article className="project-row" key={`${name}-${year}-${index}`}>
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
-              <p className="project-link">{caseLink}</p>
-              {siteUrl ? (
-                <a className="project-link" href={siteUrl} target="_blank" rel="noreferrer">
-                  {siteLink}
-                </a>
-              ) : (
-                <p className="project-link">{siteLink}</p>
-              )}
+              <div className="project-actions">
+                {caseLink && <span>{caseLink} <span aria-hidden="true">↗</span></span>}
+                {siteUrl && (
+                  <a href={siteUrl} target="_blank" rel="noreferrer">
+                    {siteLink} <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
               <p className="project-year">{year}</p>
             </article>
           ))}
