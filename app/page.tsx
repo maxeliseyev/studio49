@@ -68,12 +68,16 @@ export default function Home() {
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
               <div className="project-actions">
-                {caseLink && <span>{caseLink} <span aria-hidden="true">↗︎</span></span>}
-                {siteUrl && (
-                  <a href={siteUrl} target="_blank" rel="noreferrer">
-                    {siteLink} <span aria-hidden="true">↗︎</span>
-                  </a>
-                )}
+                <span className="project-action">
+                  {caseLink && <>{caseLink}<img className="project-arrow" src="/arrow.svg" alt="" aria-hidden="true" /></>}
+                </span>
+                <span className="project-action">
+                  {siteUrl && (
+                    <a href={siteUrl} target="_blank" rel="noreferrer">
+                    {siteLink}<img className="project-arrow" src="/arrow.svg" alt="" aria-hidden="true" />
+                    </a>
+                  )}
+                </span>
               </div>
               <p className="project-year">{year}</p>
             </article>
