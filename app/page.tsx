@@ -68,10 +68,10 @@ export default function Home() {
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
               <div className="project-actions">
-                {caseLink && <span>{caseLink} <span aria-hidden="true">↗</span></span>}
+                {caseLink && <span>{caseLink} <span aria-hidden="true">↗︎</span></span>}
                 {siteUrl && (
                   <a href={siteUrl} target="_blank" rel="noreferrer">
-                    {siteLink} <span aria-hidden="true">↗</span>
+                    {siteLink} <span aria-hidden="true">↗︎</span>
                   </a>
                 )}
               </div>
