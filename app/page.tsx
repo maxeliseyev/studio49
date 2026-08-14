@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { IntroExperience } from "./components/intro-experience";
 
 const projects = [
-  ["Cosmopolitan", "логотип / веб-дизайн / разработка", "кейс", "сайт", "2026", "https://cosmopolitancardetailing.com/"],
+  ["Cosmopolitan", "логотип / веб-дизайн / разработка", "", "сайт", "2026", "https://cosmopolitancardetailing.com/"],
   ["Petro Aesthetics", "веб-дизайн / разработка", "", "сайт", "2026", "https://petroaesthetics.com/"],
   ["Brier", "веб-дизайн / разработка", "", "сайт", "2026", "https://brier-wear.com/"],
   ["Technometall", "логотип / веб-дизайн / разработка", "", "сайт", "2026", "https://technometall.ru/"],
   ["Logos&Marks", "логотип", "кейс", "", "2025", ""],
   ["ORWO", "брендинг / веб-дизайн", "", "", "2025", ""],
-  ["Forge", "логотип / брендинг / веб-дизайн / разработка", "кейс", "сайт", "2025", "https://forgemoscow.ru/"],
+  ["Forge", "логотип / брендинг / веб-дизайн / разработка", "", "сайт", "2025", "https://forgemoscow.ru/"],
   ["КДК", "веб-дизайн / разработка", "", "сайт", "2025", "https://kdkstanki.ru/"],
   ["PAX", "веб-дизайн / разработка", "", "сайт", "2025", "https://paxfactory.com/"],
   ["Apparat software", "веб-дизайн / разработка", "", "сайт", "2025", "https://teams.apparat.software/"],
@@ -32,6 +32,8 @@ const filters = [
 ] as const;
 
 const REVEAL_CASCADE_DELAY_MS = 300;
+// Эти проекты остаются в данных, но временно не выводятся на сайт.
+const temporarilyHiddenProjects = new Set(["ORWO"]);
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number][0]>("all");
@@ -47,9 +49,10 @@ export default function Home() {
   const projectsHeadingRef = useRef<HTMLDivElement>(null);
   const projectFiltersRef = useRef<HTMLDivElement>(null);
   const projectListRef = useRef<HTMLDivElement>(null);
-  const visibleProjects = activeFilter === "all"
+  const filteredProjects = activeFilter === "all"
     ? projects
     : projects.filter(([, services]) => services.includes(activeFilter));
+  const visibleProjects = filteredProjects.filter(([name]) => !temporarilyHiddenProjects.has(name));
 
   useEffect(() => {
     const targets = [
@@ -94,12 +97,20 @@ export default function Home() {
       <IntroExperience />
       <section className={`about reveal-copy${isAboutRevealed ? " is-revealed" : ""}`} aria-labelledby="about-title" ref={aboutRef}>
         <p className="section-label">О команде</p>
-        <h2 id="about-title">Для нас важен не сам факт создания проекта, а его результат для бизнеса. За 5 лет работы в формате распределённой команды мы выстроили системный подход к решению задач и готовы применять его в новых проектах</h2>
+        <h2 id="about-title">
+          Для нас важен не сам факт создания проекта, а его результат для бизнеса.<br className="desktop-break" />
+          За 5 лет работы в формате распределённой команды мы выстроили системный<br className="desktop-break" />
+          подход к решению задач и готовы применять его в новых проектах
+        </h2>
       </section>
       <section className="projects" aria-labelledby="projects-title">
         <div className={`section-heading reveal-copy${isProjectsHeadingRevealed ? " is-revealed" : ""}`} ref={projectsHeadingRef}>
           <p className="section-label">Проекты</p>
-          <h2 id="projects-title">Проекты, которые мы уже создали: от лендингов до комплексного брендинга. Каждый из них — не просто визуальное решение, а продуманная система, которая работает на задачи бизнеса.</h2>
+          <h2 id="projects-title">
+            Проекты, которые мы уже создали: от лендингов до комплексного брендинга.<br className="desktop-break" />
+            Каждый из них — не просто визуальное решение, а продуманная система,<br className="desktop-break" />
+            которая работает на задачи бизнеса
+          </h2>
         </div>
         <div className={`project-filters reveal-filters${isProjectFiltersRevealed ? " is-revealed" : ""}`} aria-label="Тип проекта" ref={projectFiltersRef}>
           {filters.map(([filter, label]) => (

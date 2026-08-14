@@ -67,17 +67,20 @@ a:hover { opacity: 0.8; }
 .section-label { margin: 0; color: #9f9f9f; font-size: clamp(16px, .78vw, 20px); line-height: 1; }
 .reveal-copy { opacity: 0; transition: opacity 2s ease; }
 .reveal-copy.is-revealed { opacity: 1; }
-.reveal-filters button { opacity: 0; transition: opacity 2s ease; }
+.reveal-filters button { opacity: 0; transition: opacity 2s ease, filter .2s ease; }
 .reveal-filters.is-revealed button { opacity: 1; }
-.reveal-filters button:nth-child(2) { transition-delay: 120ms; }
-.reveal-filters button:nth-child(3) { transition-delay: 240ms; }
-.reveal-filters button:nth-child(4) { transition-delay: 360ms; }
-.reveal-filters button:nth-child(5) { transition-delay: 480ms; }
+.reveal-filters button:nth-child(2) { transition-delay: 120ms, 0ms; }
+.reveal-filters button:nth-child(3) { transition-delay: 240ms, 0ms; }
+.reveal-filters button:nth-child(4) { transition-delay: 360ms, 0ms; }
+.reveal-filters button:nth-child(5) { transition-delay: 480ms, 0ms; }
 .projects { margin-top: 200px; padding: 0 0 clamp(72px, 9vw, 140px); }
 .section-heading { margin-bottom: 60px; }
 .project-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
 .project-filters button { appearance: none; border: 1px solid var(--foreground); border-radius: 999px; background: transparent; color: inherit; padding: 15px 30px; font: inherit; font-size: clamp(14px, .78vw, 20px); line-height: 1; cursor: pointer; }
 .project-filters button.is-active { background: var(--foreground); color: var(--background); }
+@media (hover: hover) {
+  .project-filters button:not(.is-active):hover { filter: opacity(.5); }
+}
 .project-list { border-top: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent); }
 .reveal-project-list:not(.is-revealed) .project-row { opacity: 0; transform: translateY(18px); }
 .reveal-project-list.is-revealed .project-row { animation: project-row-reveal .675s ease both; }
@@ -87,6 +90,7 @@ a:hover { opacity: 0.8; }
 }
 .project-row { display: grid; grid-template-columns: minmax(180px, 280px) minmax(320px, 1fr) 280px minmax(72px, 1fr); gap: 40px; align-items: center; min-height: 54px; margin: 0; border-bottom: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent); font-size: clamp(16px, .94vw, 24px); line-height: 1.2; }
 .project-row p { margin: 0; }
+.project-services { color: #707070; }
 .project-actions { display: grid; grid-template-columns: repeat(2, 120px); column-gap: 40px; align-items: center; }
 .project-action { min-width: 0; }
 .project-arrow { display: inline-block; width: 11px; height: 11px; margin-left: 3px; vertical-align: -1px; }
@@ -123,6 +127,7 @@ a:hover { opacity: 0.8; }
   .intro-meta { position: absolute; z-index: 1; right: var(--page-padding); bottom: max(var(--page-padding), env(safe-area-inset-bottom)); left: var(--page-padding); display: flex; justify-content: space-between; color: #9f9f9f; font-size: 14px; line-height: 1; }
   .about { margin-top: 38px; }
   .about h2, .section-heading h2 { margin-top: 8px; font-size: 16px; line-height: 1.13; }
+  .desktop-break { display: none; }
   .section-label { font-size: 12px; }
   .projects { margin-top: 70px; padding-bottom: 80px; }
   .section-heading { margin-bottom: 24px; }
@@ -132,7 +137,7 @@ a:hover { opacity: 0.8; }
   .project-name { grid-column: 1; grid-row: 1; }
   .project-actions { grid-column: 2; grid-row: 1; width: 136px; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; justify-content: stretch; white-space: nowrap; }
   .project-action { text-align: right; }
-  .project-services { grid-column: 1; grid-row: 2; color: color-mix(in srgb, var(--foreground) 68%, transparent); font-size: 9px; line-height: 1.2; white-space: nowrap; }
+  .project-services { grid-column: 1; grid-row: 2; font-size: 8px; line-height: 1.2; white-space: nowrap; }
   .project-year { grid-column: 2; grid-row: 2; align-self: end; color: #9f9f9f; font-size: 9px; }
   .closing-footer { min-height: 60px; align-items: end; flex-direction: row; justify-content: space-between; gap: 20px; padding: 20px 0; line-height: 1.25; }
   .legal-notice { max-width: 250px; }
