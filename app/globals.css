@@ -90,7 +90,7 @@ a:hover { opacity: 0.8; }
 }
 .project-row { display: grid; grid-template-columns: minmax(180px, 280px) minmax(320px, 1fr) 280px minmax(72px, 1fr); gap: 40px; align-items: center; min-height: 54px; margin: 0; border-bottom: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent); font-size: clamp(16px, .94vw, 24px); line-height: 1.2; }
 .project-row p { margin: 0; }
-.project-services { color: #707070; }
+.project-services { color: #707070; font-size: 12px; line-height: 1.2;}
 .project-actions { display: grid; grid-template-columns: repeat(2, 120px); column-gap: 40px; align-items: center; }
 .project-action { min-width: 0; }
 .project-arrow { display: inline-block; width: 11px; height: 11px; margin-left: 3px; vertical-align: -1px; }

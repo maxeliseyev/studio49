@@ -8,19 +8,19 @@ const projects = [
   ["Petro Aesthetics", "веб-дизайн / разработка", "", "сайт", "2026", "https://petroaesthetics.com/"],
   ["Brier", "веб-дизайн / разработка", "", "сайт", "2026", "https://brier-wear.com/"],
   ["Technometall", "логотип / веб-дизайн / разработка", "", "сайт", "2026", "https://technometall.ru/"],
-  ["Logos&Marks", "логотип", "кейс", "", "2025", ""],
+  ["Logos&Marks", "логотип", "кейс", "", "2025", "", "https://www.behance.net/gallery/243448671/Logotypes-2025"],
   ["ORWO", "брендинг / веб-дизайн", "", "", "2025", ""],
   ["Forge", "логотип / брендинг / веб-дизайн / разработка", "", "сайт", "2025", "https://forgemoscow.ru/"],
   ["КДК", "веб-дизайн / разработка", "", "сайт", "2025", "https://kdkstanki.ru/"],
   ["PAX", "веб-дизайн / разработка", "", "сайт", "2025", "https://paxfactory.com/"],
   ["Apparat software", "веб-дизайн / разработка", "", "сайт", "2025", "https://teams.apparat.software/"],
-  ["Logos&Marks", "логотип", "кейс", "", "2024", ""],
-  ["SMT FLEX", "логотип / брендинг / веб-дизайн", "", "сайт", "2024", "https://smtflex.ru/"],
-  ["WhatMattersAgency", "логотип / брендинг / веб-дизайн", "кейс", "", "2024", ""],
+  ["Logos&Marks", "логотип", "кейс", "", "2024", "", "https://www.behance.net/gallery/216997067/Logotypes-2024"],
+  ["SMT FLEX", "логотип / брендинг / веб-дизайн", "кейс", "сайт", "2024", "https://smtflex.ru/", "https://www.behance.net/gallery/249769439/SMT-FLEX-identity-web"],
+  ["WhatMattersAgency", "логотип / брендинг / веб-дизайн", "кейс", "", "2024", "", "https://www.behance.net/gallery/229955147/WhatMattersAgency-identity-web"],
   ["Logos&Marks", "логотип", "кейс", "", "2023", ""],
-  ["РациON", "логотип / брендинг", "кейс", "", "2023", ""],
-  ["CROOG", "логотип / брендинг", "кейс", "", "2022", ""],
-  ["Logos&Marks", "логотип", "кейс", "", "2022", ""],
+  ["РациON", "логотип / брендинг", "кейс", "", "2023", "", "https://www.behance.net/gallery/195802431/raciON-logo-identity"],
+  ["CROOG", "логотип / брендинг", "кейс", "", "2022", "", "https://www.behance.net/gallery/174180313/CROOG-ux-ui-logo"],
+  ["Logos&Marks", "логотип", "кейс", "", "2022", "", "https://www.behance.net/gallery/161569643/Logotypes-2021-2022"],
 ] as const;
 
 const filters = [
@@ -126,13 +126,17 @@ export default function Home() {
           ))}
         </div>
         <div className={`project-list reveal-project-list${isProjectListRevealed ? " is-revealed" : ""}`} ref={projectListRef}>
-          {visibleProjects.map(([name, services, caseLink, siteLink, year, siteUrl], index) => (
+          {visibleProjects.map(([name, services, caseLink, siteLink, year, siteUrl, caseUrl], index) => (
             <article className="project-row" key={`${name}-${year}-${index}`} style={isProjectListRevealed ? { animationDelay: `${index * 50}ms` } : undefined}>
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
               <div className="project-actions">
                 <span className="project-action">
-                  {caseLink && <>{caseLink}<img className="project-arrow" src="/arrow.svg" alt="" aria-hidden="true" /></>}
+                  {caseUrl && (
+                    <a href={caseUrl} target="_blank" rel="noreferrer">
+                      {caseLink}<img className="project-arrow" src="/arrow.svg" alt="" aria-hidden="true" />
+                    </a>
+                  )}
                 </span>
                 <span className="project-action">
                   {siteUrl && (
