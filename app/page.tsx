@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IntroExperience } from "./components/intro-experience";
 
 const projects = [
@@ -31,25 +31,77 @@ const filters = [
   ["разработка", "разработка"],
 ] as const;
 
+const REVEAL_CASCADE_DELAY_MS = 300;
+
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number][0]>("all");
+  const [isAboutRevealed, setIsAboutRevealed] = useState(false);
+  const [isProjectsHeadingReleased, setIsProjectsHeadingReleased] = useState(false);
+  const [isProjectsHeadingInView, setIsProjectsHeadingInView] = useState(false);
+  const [isProjectsHeadingRevealed, setIsProjectsHeadingRevealed] = useState(false);
+  const [isProjectFiltersInView, setIsProjectFiltersInView] = useState(false);
+  const [isProjectFiltersRevealed, setIsProjectFiltersRevealed] = useState(false);
+  const [isProjectListInView, setIsProjectListInView] = useState(false);
+  const [isProjectListRevealed, setIsProjectListRevealed] = useState(false);
+  const aboutRef = useRef<HTMLElement>(null);
+  const projectsHeadingRef = useRef<HTMLDivElement>(null);
+  const projectFiltersRef = useRef<HTMLDivElement>(null);
+  const projectListRef = useRef<HTMLDivElement>(null);
   const visibleProjects = activeFilter === "all"
     ? projects
     : projects.filter(([, services]) => services.includes(activeFilter));
 
+  useEffect(() => {
+    const targets = [
+      [aboutRef.current, setIsAboutRevealed],
+      [projectsHeadingRef.current, setIsProjectsHeadingInView],
+      [projectFiltersRef.current, setIsProjectFiltersInView],
+      [projectListRef.current, setIsProjectListInView],
+    ] as const;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const target = targets.find(([element]) => element === entry.target);
+        target?.[1](true);
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.2 });
+
+    targets.forEach(([element]) => element && observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isAboutRevealed) return;
+    const timeout = window.setTimeout(() => setIsProjectsHeadingReleased(true), REVEAL_CASCADE_DELAY_MS);
+    return () => window.clearTimeout(timeout);
+  }, [isAboutRevealed]);
+
+  useEffect(() => {
+    if (isProjectsHeadingReleased && isProjectsHeadingInView) setIsProjectsHeadingRevealed(true);
+  }, [isProjectsHeadingReleased, isProjectsHeadingInView]);
+
+  useEffect(() => {
+    if (isProjectsHeadingRevealed && isProjectFiltersInView) setIsProjectFiltersRevealed(true);
+  }, [isProjectFiltersInView, isProjectsHeadingRevealed]);
+
+  useEffect(() => {
+    if (isProjectFiltersRevealed && isProjectListInView) setIsProjectListRevealed(true);
+  }, [isProjectFiltersRevealed, isProjectListInView]);
+
   return (
     <main>
       <IntroExperience />
-      <section className="about" aria-labelledby="about-title">
+      <section className={`about reveal-copy${isAboutRevealed ? " is-revealed" : ""}`} aria-labelledby="about-title" ref={aboutRef}>
         <p className="section-label">О команде</p>
-        <h2 id="about-title">Нам важно, чтобы проект приносил результат, а не просто пополнял портфолио. Работая в формате распределённой команды в течении 5 лет, мы сформировали системный подход к выполнению задач. И готовы к новым вызовам.</h2>
+        <h2 id="about-title">Для нас важен не сам факт создания проекта, а его результат для бизнеса. За 5 лет работы в формате распределённой команды мы выстроили системный подход к решению задач и готовы применять его в новых проектах</h2>
       </section>
       <section className="projects" aria-labelledby="projects-title">
-        <div className="section-heading">
+        <div className={`section-heading reveal-copy${isProjectsHeadingRevealed ? " is-revealed" : ""}`} ref={projectsHeadingRef}>
           <p className="section-label">Проекты</p>
-          <h2 id="projects-title">Здесь — то, что мы уже построили. От лендингов до сложных айдентик. Каждый проект — не просто картинка, а работающая система.</h2>
+          <h2 id="projects-title">Проекты, которые мы уже создали: от лендингов до комплексного брендинга. Каждый из них — не просто визуальное решение, а продуманная система, которая работает на задачи бизнеса.</h2>
         </div>
-        <div className="project-filters" aria-label="Тип проекта">
+        <div className={`project-filters reveal-filters${isProjectFiltersRevealed ? " is-revealed" : ""}`} aria-label="Тип проекта" ref={projectFiltersRef}>
           {filters.map(([filter, label]) => (
             <button
               className={activeFilter === filter ? "is-active" : undefined}
@@ -62,9 +114,9 @@ export default function Home() {
             </button>
           ))}
         </div>
-        <div className="project-list">
+        <div className={`project-list reveal-project-list${isProjectListRevealed ? " is-revealed" : ""}`} ref={projectListRef}>
           {visibleProjects.map(([name, services, caseLink, siteLink, year, siteUrl], index) => (
-            <article className="project-row" key={`${name}-${year}-${index}`}>
+            <article className="project-row" key={`${name}-${year}-${index}`} style={isProjectListRevealed ? { animationDelay: `${index * 50}ms` } : undefined}>
               <p className="project-name">{name}</p>
               <p className="project-services">{services}</p>
               <div className="project-actions">
