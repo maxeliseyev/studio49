@@ -118,7 +118,7 @@ a:hover { opacity: 0.8; }
   .project-name { grid-column: 1; grid-row: 1; }
   .project-actions { grid-column: 2; grid-row: 1; width: 136px; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; justify-content: stretch; white-space: nowrap; }
   .project-action { text-align: right; }
-  .project-services { grid-column: 1; grid-row: 2; color: color-mix(in srgb, var(--foreground) 68%, transparent); font-size: 9px; line-height: 1.2; }
+  .project-services { grid-column: 1; grid-row: 2; color: color-mix(in srgb, var(--foreground) 68%, transparent); font-size: 9px; line-height: 1.2; white-space: nowrap; }
   .project-year { grid-column: 2; grid-row: 2; align-self: end; color: #9f9f9f; font-size: 9px; }
   .closing-footer { min-height: 60px; align-items: end; flex-direction: row; justify-content: space-between; gap: 20px; padding: 20px 0; line-height: 1.25; }
   .legal-notice { max-width: 250px; }
