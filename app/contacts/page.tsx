@@ -1,3 +1,5 @@
+import { ContactForm } from "./contact-form";
+
 const socialLinks = [
   { label: "behance", href: "https://www.behance.net/s49design" },
   { label: "инстаграм*", href: "https://www.instagram.com/s49design/" },
@@ -35,33 +37,7 @@ export default function ContactsPage() {
           и понять, чем можем быть полезны. Без обязательств и лишних формальностей.
         </h1>
 
-        <form className="contacts-form" action="mailto:s49design@yandex.ru" method="post" encType="text/plain">
-          <div className="contacts-form-fields">
-            <label>
-              <span className="sr-only">Имя</span>
-              <input name="name" type="text" placeholder="Имя" required />
-            </label>
-            <label>
-              <span className="sr-only">Почта</span>
-              <input name="email" type="email" placeholder="Почта" required />
-            </label>
-            <label>
-              <span className="sr-only">Телефон или мессенджер</span>
-              <input name="contact" type="text" placeholder="Телефон или мессенджер" />
-            </label>
-            <label className="contacts-form-message">
-              <span className="sr-only">Несколько слов о задаче</span>
-              <textarea name="message" placeholder="Несколько слов о задаче" required />
-            </label>
-          </div>
-          <label className="contacts-consent">
-            <input name="consent" type="checkbox" defaultChecked required />
-            <span>Я даю согласие на обработку моих персональных данных в соответствии с <a href="/privacy-policy">Политикой обработки персональных данных</a></span>
-          </label>
-          <button className="contacts-submit" type="submit">
-            Отправить <img className="project-arrow" src="/arrow.svg" alt="" aria-hidden="true" />
-          </button>
-        </form>
+        <ContactForm />
       </section>
 
       <footer className="contacts-footer">
