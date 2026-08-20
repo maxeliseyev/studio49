@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const socialLinks = [
-  { label: "телеграм", href: "https://t.me/s49design" },
   { label: "behance", href: "https://www.behance.net/s49design" },
   { label: "инстаграм*", href: "https://www.instagram.com/s49design/" },
+  { label: "телеграм", href: "https://t.me/s49design" },
   { label: "линкедин", href: "https://www.linkedin.com/company/s49design/" },
-  { label: "написать", href: "mailto:s49design@yandex.ru" },
+  { label: "написать", href: "/contacts" },
 ];
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);

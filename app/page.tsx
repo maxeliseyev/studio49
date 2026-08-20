@@ -98,18 +98,17 @@ export default function Home() {
       <section className={`about reveal-copy${isAboutRevealed ? " is-revealed" : ""}`} aria-labelledby="about-title" ref={aboutRef}>
         <p className="section-label">О команде</p>
         <h2 id="about-title">
-          Для нас важен не сам факт создания проекта, а его результат для бизнеса.<br className="desktop-break" />
-          За 5 лет работы в формате распределённой команды мы выстроили системный<br className="desktop-break" />
-          подход к решению задач и готовы применять его в новых проектах
+          <span>Сейчас нас четверо: арт-директор, UX/UI-дизайнер, фуллстак-разработчик и графический дизайнер. И этого хватает, чтобы закрыть проект целиком — от исследования и брендинга до свёрстанного и работающего сайта, без подрядчиков на стороне.</span>
+          <span>Каждый проект начинается с задачи, а не с макета: разбираемся в контексте, выбираем направление и только потом проектируем решение.</span>
+          <span>Пять лет работаем распределённо и за это время собрали процесс, который доводит проект до запуска без потерь.</span>
+          <span>Нам важно делать не просто выразительные проекты, а решения, после которых бизнес становится понятнее и сильнее.</span>
         </h2>
       </section>
       <section className="projects" aria-labelledby="projects-title">
         <div className={`section-heading reveal-copy${isProjectsHeadingRevealed ? " is-revealed" : ""}`} ref={projectsHeadingRef}>
           <p className="section-label">Проекты</p>
           <h2 id="projects-title">
-            Проекты, которые мы уже создали: от лендингов до комплексного брендинга.<br className="desktop-break" />
-            Каждый из них — не просто визуальное решение, а продуманная система,<br className="desktop-break" />
-            которая работает на задачи бизнеса
+            Проекты, которые мы уже создали: от лендингов до комплексного брендинга. Каждый из них — не просто визуальное решение, а продуманная система, которая&nbsp;работает на задачи бизнеса
           </h2>
         </div>
         <div className={`project-filters reveal-filters${isProjectFiltersRevealed ? " is-revealed" : ""}`} aria-label="Тип проекта" ref={projectFiltersRef}>
@@ -153,6 +152,7 @@ export default function Home() {
       </section>
       <footer className="closing-footer">
         <p className="legal-notice">* Принадлежит Meta — организации, деятельность которой запрещена в РФ</p>
+        <a className="footer-privacy" href="/privacy-policy">Политика обработки данных</a>
         <p className="copyright" aria-label="S—49, copyright 2026">
           S—49©2026
         </p>
