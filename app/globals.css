@@ -146,6 +146,20 @@ a:hover { opacity: 0.8; }
 .policy-content ul { max-width: 960px; margin: 0 0 18px; padding-left: 1.2em; }
 .policy-content li + li { margin-top: 6px; }
 
+@media (max-width: 1366px) and (min-width: 641px) {
+  .project-row { grid-template-columns: minmax(145px, .8fr) minmax(260px, 1.4fr) 210px 64px; gap: 24px; }
+  .project-actions { grid-template-columns: repeat(2, 90px); column-gap: 20px; }
+}
+
+@media (max-width: 800px) and (min-width: 641px) {
+  .project-row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; min-height: 0; padding: 10px 0; font-size: 16px; }
+  .project-name { grid-column: 1; grid-row: 1; }
+  .project-actions { grid-column: 2; grid-row: 1; width: 160px; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; justify-content: stretch; white-space: nowrap; }
+  .project-action { text-align: right; }
+  .project-services { grid-column: 1; grid-row: 2; font-size: 10px; white-space: nowrap; }
+  .project-year { grid-column: 2; grid-row: 2; align-self: end; color: #9f9f9f; font-size: 11px; }
+}
+
 @media (max-width: 640px) {
   :root { --page-padding: 20px; --logo-y: 56vh; --line-thickness: 8px; --logo-gap: 6px; --s-width: 34px; --forty-nine-width: 67px; }
   /* Хедер растянут на весь экран, чтобы ссылки могли прижаться к низу. Закрытый
