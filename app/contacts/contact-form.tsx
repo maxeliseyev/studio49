@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { NoWidows } from "../components/no-widows";
 
 type SubmissionStatus = "idle" | "sending" | "success" | "error";
 
@@ -28,7 +29,8 @@ export function ContactForm() {
   };
 
   return (
-    <form className="contacts-form" onSubmit={handleSubmit}>
+    <NoWidows>
+      <form className="contacts-form" onSubmit={handleSubmit}>
       <div className="contacts-form-fields">
         <label>
           <span className="sr-only">Имя</span>
@@ -61,6 +63,7 @@ export function ContactForm() {
       <p className={`contacts-form-status${status === "error" ? " is-error" : ""}`} role="status" aria-live="polite">
         {status === "success" ? "Спасибо! Сообщение отправлено." : error}
       </p>
-    </form>
+      </form>
+    </NoWidows>
   );
 }

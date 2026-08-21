@@ -1,3 +1,5 @@
+import { NoWidows } from "../components/no-widows";
+
 const socialLinks = [
   { label: "behance", href: "https://www.behance.net/s49design" },
   { label: "инстаграм*", href: "https://www.instagram.com/s49design/" },
@@ -8,7 +10,8 @@ const socialLinks = [
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="policy-page">
+    <NoWidows>
+      <main className="policy-page">
       <header className="contacts-header">
         <a className="site-mark" href="/" aria-label="S—49, на главную страницу">
           <img src="/studio49-header.svg" alt="S—49" />
@@ -100,6 +103,7 @@ export default function PrivacyPolicyPage() {
         <a href="/privacy-policy">Политика обработки данных</a>
         <p>S—49©2026</p>
       </footer>
-    </main>
+      </main>
+    </NoWidows>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { IntroExperience } from "./components/intro-experience";
+import { NoWidows } from "./components/no-widows";
 
 const projects = [
   ["Cosmopolitan", "логотип / веб-дизайн / разработка", "", "сайт", "2026", "https://cosmopolitancardetailing.com/"],
@@ -93,7 +94,8 @@ export default function Home() {
   }, [isProjectFiltersRevealed, isProjectListInView]);
 
   return (
-    <main>
+    <NoWidows>
+      <main>
       <IntroExperience />
       <section className={`about reveal-copy${isAboutRevealed ? " is-revealed" : ""}`} aria-labelledby="about-title" ref={aboutRef}>
         <p className="section-label">О команде</p>
@@ -157,6 +159,7 @@ export default function Home() {
           S—49©2026
         </p>
       </footer>
-    </main>
+      </main>
+    </NoWidows>
   );
 }
